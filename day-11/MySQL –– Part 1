@@ -1,0 +1,286 @@
+/* Before we get started, let's cover a definitions/buzzwords.
+
+	Relational Database: a relational database is a type of database.
+    It uses a STRUCTURE that allows us to identify and access data in 
+    RELATION to another piece of data in the database. Often, data in
+    a relational database is organized into tables.
+    
+		Rows: sometimes referred to as 'records,' rows contain information
+        on each of our observations.
+        
+        Columns: similar to a Python DataFrame, each column of a relational
+        database is representative of a variable. Each column is of a 
+        specific data type (whether that be STRING or INTEGER or whatever); 
+        this, too, ought to remind you of Python DataFrames.
+    
+    Relational Database Management System (RDBMS): A relational database 
+    management system, or RDBMS, is a program that allows you to create, 
+    update, and administer a relational database. Most relational database
+    management systems use the SQL language to access the database. Today 
+    we will use the MySQL variation.
+    
+    SQL: its own programming language, SQL (or Structured Query Language) is
+    used to communicate with data stored in our relational database management
+    system (RDBMS). The SQL syntax is similar to the English language, which 
+    makes it relatively easy to write, read, and interpret. Many RDBMSs use 
+    SQL to access the data in tables. Sidenote: you'll often hear SQL pronounced 
+    as 'sequel.'
+    
+    MySQL: MySQL is the most popular open source SQL relational database system. 
+    It is typically used for web application development, and often accessed 
+    using PHP. The main advantages of MySQL are that it is easy to use, inexpensive,
+    reliable (it's been around since 1995) and has a large community of developers
+    who can help answer your questions (Google, Google, Google). Some of the disadvantages
+    are that it has been known to suffer from poor performance when SCALING, open
+    source development has lagged since Oracle has taken control of MySQL, and it
+    does not include some advanced features that developers may be used to.
+    Relational Database System:
+    
+    *KEY TAKEAWAY* ==>  Relational databases store data in tables. Tables can grow
+    large and have a multitude of columns and records. Relational Database Management
+    Systems (RDBMSs) use SQL and variants of SQL (such as MySQL) to manage the data 
+    in these large tables. The RDBMS you use is your choice and depends on the
+    complexity of your application. */
+    
+    
+-- SQL Basics --
+    
+
+-- The SELECT Statement and the LIMIT Clause --
+
+select *
+from Customers
+limit 3; -- Only need this when starting a new line
+		 -- of code below
+
+select cust_name
+, cust_city
+from Customers;
+
+## The WHERE Clause ##
+
+select cust_address
+, cust_name
+from Customers
+where cust_name = 'Fun4All';
+
+select cust_address
+from Customers
+where cust_name = 'Fun4All';
+
+
+## The AND and OR Conditions ##
+
+select cust_name
+from Customers
+where cust_address = '1 Sunny Place' and cust_contact = 'Jim Jones';
+
+select cust_name
+from Customers
+where cust_address = '1 Sunny Place' or cust_contact = 'Jim Jone';
+
+select *
+from Products;
+
+select *
+from Products
+where (vend_id = 'DLL01' or vend_id = 'BRS01') 
+and prod_price > 5;
+
+select *
+from Products
+where vend_id in ('DLL01', 'BRS01') and prod_price > 5;
+
+select *
+from Products
+where vend_id in ('DLL01', 'BRS01') and prod_price > 5;
+
+## The ORDER BY Clause ##
+
+select *
+from Products;
+
+select *
+from Products
+where vend_id in ('DLL01', 'BRS01') and prod_price > 5
+order by prod_price;
+
+select *
+from Products
+where vend_id in ('DLL01', 'BRS01') and prod_price > 5
+order by 4; -- Ordering by column NUMBER
+
+select *
+from Products
+where vend_id in ('DLL01', 'BRS01') and prod_price > 5
+order by 4, 3; -- Ordering by multiple columns (First 4, second 3)
+
+select *
+from Products
+where vend_id in ('DLL01', 'BRS01') and prod_price > 5
+order by 4 desc, 3 desc; -- Specifying sort direction
+
+select *
+from Products
+where vend_id in ('DLL01', 'BRS01') and prod_price > 5
+order by prod_price; -- 'asc' is the DEFAULT
+
+
+## The IN Operator ##
+
+select *
+from Products
+where vend_id in ('DLL01', 'BRS01') and prod_price > 5
+order by prod_price desc;
+
+
+## The NOT Operator ##
+
+select cust_address
+, cust_name
+from Customers
+where not cust_name = 'Fun4All';
+
+select *
+from Customers;
+
+
+## The OFFSET Clause ##
+
+select *
+from Customers
+limit 100 offset 2;
+
+select cust_address
+, cust_name
+from Customers
+where cust_name != 'Fun4All';
+
+select *
+from Products;
+
+select prod_name
+, prod_price
+from Products
+where prod_price <= 10;
+
+select vend_id
+, prod_name
+, prod_price
+from Products
+where vend_id != 'DLL01';
+
+select vend_id
+, prod_name
+, prod_price
+from Products
+where not vend_id = 'DLL01';
+
+select vend_id
+, prod_name
+, prod_price
+from Products
+where vend_id <> 'DLL01';
+
+
+## The BETWEEN Condition ##
+
+select vend_id
+, prod_name
+, prod_price
+from Products
+where prod_price BETWEEN 3 and 8
+order by prod_price
+limit 1;
+
+select vend_id
+, prod_name
+, prod_price
+from Products
+where prod_price BETWEEN 3 and 8
+order by prod_price desc
+limit 1;
+
+
+## The IS NULL Clause ##
+
+select cust_name
+, cust_email
+from Customers
+where cust_email is null;
+
+select cust_name
+, cust_email
+from Customers
+where cust_email is not null;
+
+select cust_name
+from Customers
+where cust_email is not null;
+
+select *
+from Products;
+
+
+## The LIKE Operator and the Percent (%) Wildcard ##
+
+select *
+from Products 
+where prod_name like '1%';
+
+select *
+from Products
+where prod_name like '%bean bag%';
+
+select *
+from Products
+where prod_name like 'F%y';
+
+
+## The LIKE Operator and the Underscore (_) Wildcard ##
+
+select *
+from Products
+where prod_name like '__ inch teddy bear';
+
+select *
+from Products
+where prod_name like '__ inch teddy bear' or 
+prod_name like'_ inch teddy bear';
+
+# The same as:
+
+select *
+from Products
+where prod_name like '% inch teddy bear';
+
+select *
+from Vendors;
+
+
+## The CONCAT Function and Using Aliases ##
+
+select vend_name
+, vend_city
+, CONCAT(vend_name, ' (', vend_country, ')') as 'Vendor Name and Country'
+from Vendors
+order by vend_name;
+
+select vend_name
+, vend_city
+, CONCAT(vend_name, ' (', vend_country, ')') as 'Vendor Name and Country'
+from Vendors
+order by CONCAT(vend_name, ' (', vend_country, ')') desc;
+
+select prod_id
+, quantity
+, item_price
+, quantity*item_price as prod_rev
+from OrderItems
+order by quantity*item_price desc
+limit 5;
+
+
+/* To-do list: The WHERE clause, AND & OR, BETWEEN & IN, NULL & LIKE,
+aggregate functions (sum, avg, count, etc), ORDER BY & GROUP BY, and all
+different types of JOINS */
