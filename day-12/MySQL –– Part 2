@@ -1,0 +1,301 @@
+/* Joins, group by, and presentations */ 
+/* Primary Key: Primary key uniquely identify a record in the table. Primary key can't accept 
+null values. We can have only one Primary key in a table, though a primary key can be a 
+COMBINATION of multiple columns (though it can't be more than 16 columns); this forces us 
+to JOIN on multiple columns.
+
+Foreign Key: Foreign key is a field in the table that is primary key in another table. Foreign 
+key can accept multiple null value. It is a column or combination of columns that is used to 
+establish and enforce a LINK between the data in two tables to control the data that can be 
+stored in the foreign key table. We can have more than one foreign key in a table. 
+
+
+A good example is an Orders table with Order_ID as the PRIMARY key and a Customer ID column as
+a foreign key, and a Customers table with Customer_ID as its PRIMARY KEY*/
+
+
+select *
+from Customers;
+
+select *
+from Orders;
+
+select vend_name
+, upper(vend_name) as vend_name_upcase
+from Vendors
+order by vend_name desc;
+
+/*
+select RTRIM(vend_name) + ' (' + RTRIM(vend_country) + ') '
+	as vend_title
+from Vendors;*/
+
+select *
+from Vendors;
+
+select *
+from Products;
+
+select avg(prod_price) as avg_price
+from Products
+where vend_id = 'DLL01';
+
+select avg(prod_price) as avg_price
+from Products
+where vend_id = 'DLL01' or vend_id = 'BRS01';
+
+select avg(prod_price) as avg_price
+from Products
+where vend_id in ('DLL01', 'BRS01');
+
+select *
+from Customers;
+
+select count(*) as num_cust
+from Customers;
+
+select *
+from Products;
+
+select max(prod_price)
+from Products;
+
+select min(prod_price) as min_price
+from Products;
+
+select sum(quantity) as items_ordered
+from OrderItems
+where order_num = '20005';
+
+select *
+from OrderItems;
+
+select sum(quantity*item_price) as revenue_per_prod
+from OrderItems
+where order_num = '20005';
+
+select *
+from Products;
+
+select avg(distinct prod_price) as avg_price
+from Products
+where vend_id = 'DLL01';
+
+select count(*) as total_number
+, min(prod_price) as min_price
+, max(prod_price) as max_price
+, avg(prod_price) as avg_price
+from Products;
+
+
+## GROUP BY clause ##
+
+select *
+from Products;
+
+select vend_id
+, count(*) as num_prods
+from Products
+group by vend_id;
+
+select vend_id
+, count(*) as num_prods
+from Products
+group by vend_id
+having count(*) > 2;
+
+
+select vend_id
+, count(*) as num_prods
+from Products
+where vend_id = 'BRS01'
+group by vend_id
+having count(*) > 2;
+
+select cust_id
+from Orders
+where order_num in (select order_num
+					from OrderItems
+                    where prod_id = 'RGAN01');
+                 
+select *
+from Orders;
+
+select *
+from OrderItems;
+
+select *
+from Customers;
+
+select cust_name
+, cust_contact
+from Customers
+where cust_id in (select cust_id
+				  from Orders
+                  where order_num in (select order_num
+									  from OrderItems
+                                      where prod_id = 'RGAN01'));
+									
+select *
+from Vendors;
+
+select *
+from Products;    
+                                  
+## INNER Joins ##
+
+select vend_name
+, prod_name
+, prod_price
+from Vendors
+inner join Products
+on Vendors.vend_id = Products.vend_id;
+
+select vend_name
+, Vendors.vend_id
+, prod_name
+, prod_price
+from Vendors
+inner join Products
+on Vendors.vend_id = Products.vend_id;
+
+## LEFT Join ##
+
+select *
+from Customers;
+
+select *
+from Orders;
+
+select c.cust_id
+, o.order_num
+from Orders as o
+left join Customers as c
+on c.cust_id = o.cust_id;
+
+## FULL OUTER JOIN ##alter
+
+select *
+from Orders;
+
+select *
+from Customers;
+
+
+
+select c.cust_id
+, o.order_id
+from Orders as o
+FULL OUTER JOIN Customers as c
+on o.cust_id = c.cust_id;
+
+SELECT c.cust_id
+, o.order_id
+FROM Orders as o
+LEFT JOIN Customers as c
+ON o.cust_id = c.cust_id
+UNION
+SELECT c.cust_id
+, o.order_id 
+FROM Customers as c
+RIGHT JOIN Orders as o
+on o.cust_id = c.cust_id;
+
+
+
+
+                                      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+## The INNER Join ##
+
+select c.code
+, c.name
+, c.region
+, p.year
+, p.fertility_rate
+, p.country_code 
+from countries as c
+inner join populations as p
+on c.code = p.country_code
+
+
+## The USING shortcut ##
+
+SELECT c.name AS country, continent, l.name AS language, official
+FROM countries AS c
+INNER JOIN languages AS l
+USING (code);
+
+
+## The LEFT Join ##
+
+-- select name, region, and gdp_percapita
+select name, region, gdp_percapita
+-- countries (alias c) on the left
+from countries AS c
+-- join with economies (alias e)
+LEFT JOIN economies AS e
+-- match on code fields
+on c.code = e.code
+-- focus on 2010 entries
+where e.year = 2010;
+
+
+## The RIGHT Join ##
+
+## Convert this code to use RIGHT JOINs instead of LEFT JOINs
+
+/*
+SELECT cities.name AS city, urbanarea_pop, countries.name AS country,
+       indep_year, languages.name AS language, percent
+FROM cities
+LEFT JOIN countries
+ON cities.country_code = countries.code
+LEFT JOIN languages
+ON countries.code = languages.code
+ORDER BY city, language; */
+
+/*
+
+SELECT cities.name AS city, urbanarea_pop, countries.name AS country,
+       indep_year, languages.name AS language, percent
+FROM languages
+RIGHT JOIN countries
+ON languages.code = countries.code
+RIGHT JOIN cities
+ON countries.code = cities.country_code
+ORDER BY city, language;
+
+
+## The FULL OUTER Join ##
+
+SELECT c1.name AS country, region, l.name AS language, c2.basic_unit, c2.frac_unit
+FROM countries AS c1
+FULL JOIN languages AS l
+USING (code)
+FULL JOIN currencies AS c2
+USING (code)
+WHERE region LIKE 'M%esia';
+
